@@ -13,21 +13,38 @@ export default function App(){
                 isHeld: false,
                 id: nanoid()
             }))
-        /* let arrayRndNumb = []
-        for (let i = 0; i < 10; i++) {
-            let rndNumber = Math.floor(Math.random() * 6)+1
-            arrayRndNumb.push(rndNumber)
-        }
-        return arrayRndNumb */
     }
 
-    function rollDice(){
+    /* function rollDice(){
         setDice(
             allNewDice()
         )
+    } */
+
+    function rollDice(){
+        setDice(prevDice => prevDice.map(die =>
+            die.isHeld == false ? 
+                {...die, value: Math.ceil(Math.random() * 6)} : die
+        ))
     }
 
-    const diceElements = dice.map(dieObj => <Die key={dieObj.id} value={dieObj.value}/>)
+    function hold(id){
+        setDice(prevDice => prevDice.map(die => 
+            die.id === id ? 
+                {...die, isHeld: !die.isHeld} : die
+                
+            ))
+    }
+
+    const diceElements = dice.map(dieObj => (
+        <Die 
+            isHeld={dieObj.isHeld}
+            key={dieObj.id} 
+            value={dieObj.value}
+            hold={() => hold(dieObj.id)}
+        />
+        )
+    )
 
     return(
         <main>
