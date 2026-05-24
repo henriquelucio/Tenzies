@@ -5,7 +5,14 @@ import ReactConfetti from "react-confetti"
 
 export default function App(){
     const [dice, setDice] = React.useState(() => allNewDice())
+    const btnRef = React.useRef(null)
     const gameWon = dice.every(die => die.isHeld) && dice.every(die => die.value == dice[0].value)
+
+    React.useEffect(() => {
+        if(gameWon){
+            btnRef.current.focus()
+        }
+    }, [gameWon])
 
     function allNewDice(){
         return new Array(10)
@@ -48,12 +55,15 @@ export default function App(){
     return(
         <main>
             {gameWon && <ReactConfetti />}
+            <div aria-live="polite" className="sr-only">
+                {gameWon && <p>Congratulations! You won! Press "New Game" to start again.</p>}
+            </div>
             <h1 className="title">Tenzies</h1>
             <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
             <div className="dice-container">
                 {diceElements}
             </div>
-            <button className="roll-dice" onClick={rollDice}>{gameWon ? "New Game" : "Roll"}</button>
+            <button ref={btnRef} className="roll-dice" onClick={rollDice}>{gameWon ? "New Game" : "Roll"}</button>
         </main>
     )
 }
